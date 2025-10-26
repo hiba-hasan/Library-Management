@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head}"></th:block>
+    <title>Library Home</title>
+</head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+    <h1>Welcome to the Library</h1>
+
+    <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}">
+        Error message goes here
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Borrow a Book</h3>
+            <form th:action="@{/borrow}" method="post" class="card p-3">
+                <div class="mb-3">
+                    <label for="memberId" class="form-label">Select Member</label>
+                    <select class="form-select" id="memberId" name="memberId" required>
+                        <option th:each="member : ${allMembers}"
+                                th:value="${member.id}"
+                                th:text="${member.name} + ' (' + ${member.email} + ')'"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="bookId" class="form-label">Select Book (Only available books shown)</label>
+                    <select class="form-select" id="bookId" name="bookId" required>
+                        <option th:each="book : ${allBooks}"
+                                th:if="${book.available}"
+                                th:value="${book.id}"
+                                th:text="${book.title} + ' by ' + ${book.author}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Borrow</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Overdue Books</h3>
+            <div class="card p-3 bg-warning-subtle">
+                <ul class="list-group list-group-flush">
+                    <li th:if="${#lists.isEmpty(overdueBooks)}" class="list-group-item bg-transparent">
+                        No overdue books!
+                    </li>
+                    <li th:each="record : ${overdueBooks}" class="list-group-item bg-transparent">
+                        <span th:text="${record.book.title}"></span>
+                        (Due: <span th:text="${record.dueDate}"></span>)
+                        by <span th:text="${record.member.name}"></span>
+
+                        <form th:action="@{/return}" method="post" class="d-inline float-end">
+                            <input type="hidden" name="recordId" th:value="${record.id}" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Return</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

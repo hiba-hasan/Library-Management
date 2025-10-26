@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head}"></th:block>
+    <title>Manage Books</title>
+</head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+    <h2>Manage Books</h2>
+
+    <div class="card bg-light p-3 mb-4">
+        <h3>Add New Book</h3>
+        <form th:action="@{/books/add}" th:object="${newBook}" method="post">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="author" class="form-label">Author</label>
+                    <input type="text" class="form-control" id="author" th:field="*{author}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="isbn" class="form-label">ISBN</label>
+                    <input type="text" class="form-control" id="isbn" th:field="*{isbn}" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Book</button>
+        </form>
+    </div>
+
+    <h3>All Books</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}">1</td>
+            <td th:text="${book.title}">Book Title</td>
+            <td th:text="${book.author}">Book Author</td>
+            <td th:text="${book.isbn}">123456</td>
+            <td>
+                <span th:if="${book.available}" class="badge bg-success">Available</span>
+                <span th:unless="${book.available}" class="badge bg-danger">Borrowed</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

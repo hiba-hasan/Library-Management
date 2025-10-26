@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments :: head}"></th:block>
+    <title>Book Details</title>
+</head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+<div class="container">
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Book Details</h3>
+        </div>
+        <div class="card-body">
+            <h4 class="card-title" th:text="${book.title}">Book Title</h4>
+            <p class="card-text">
+                <strong>Author:</strong> <span th:text="${book.author}">Author Name</span><br>
+                <strong>Genre:</strong> <span th:text="${book.genre}">Genre</span><br>
+                <strong>ISBN:</strong> <span th:text="${book.isbn}">123456789</span><br>
+                <strong>Quantity:</strong>
+                <span th:text="${book.availableQuantity}">2</span> available /
+                <span th:text="${book.totalQuantity}">5</span> total
+            </p>
+            <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-warning">Edit This Book</a>
+        </div>
+    </div>
+
+    <h3>Borrowing History</h3>
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>Member Email</th>
+            <th>Borrowed</th>
+            <th>Due</th>
+            <th>Returned</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(history)}">
+            <td colspan="6" class="text-center">This book has never been borrowed.</td>
+        </tr>
+        <tr th:each="record : ${history}">
+            <td th:text="${record.member.name}">Member Name</td>
+            <td th:text="${record.member.email}">member@email.com</td>
+            <td th:text="${record.borrowDate}">2025-10-01</td>
+            <td th:text="${record.dueDate}">2025-10-15</td>
+            <td th:text="${record.returnDate}">-</td>
+            <td>
+                <span th:if="${record.returnDate != null}" class="badge bg-success">Returned</span>
+                <span th:if="${record.returnDate == null && record.dueDate.isBefore(today)}" class="badge bg-danger">Overdue</span>
+                <span th:if="${record.returnDate == null && !record.dueDate.isBefore(today)}" class="badge bg-secondary">Borrowed</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/admin/dashboard}" class="btn btn-primary mt-3">Back to Dashboard</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
